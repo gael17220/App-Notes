@@ -1,0 +1,15 @@
+{
+  "name": "AppNotes",
+  "short_name": "AppNotes",
+  "description": "Notes libres et matrice d'Eisenhower",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f5ef",
+  "theme_color": "#f7f5ef",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

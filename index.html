@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AppNotes</title>
+  <meta name="theme-color" content="#f7f5ef" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1c1c1e" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="AppNotes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-512.png">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    // Applique le thème choisi avant l'affichage, pour éviter un flash de couleurs
+    try { const t = localStorage.getItem('appnotes.theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="brand"><img src="icon.svg" alt="" width="24" height="24">AppNotes</h1>
+    <span class="spacer"></span>
+    <div class="history" role="group" aria-label="Historique">
+      <button id="undo-btn" class="icon-btn" type="button" title="Annuler (⌘Z)" aria-label="Annuler" disabled>
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 14 4 9l5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button id="redo-btn" class="icon-btn" type="button" title="Refaire (⌘⇧Z)" aria-label="Refaire" disabled>
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="m15 14 5-5-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <button id="sync-status" class="sync-status" type="button" title="Synchroniser maintenant">
+      <span class="dot"></span><span class="label">Local</span>
+    </button>
+    <button id="theme-toggle" class="icon-btn theme-btn" type="button" title="Thème" aria-label="Thème">
+      <svg class="i-light" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></g></svg>
+      <svg class="i-dark" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="currentColor"/></svg>
+    </button>
+    <button id="open-settings" class="icon-btn" type="button" title="Réglages" aria-label="Réglages">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M19.4 13a7.5 7.5 0 0 0 0-2l2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-1.7-1L15 3.5h-4l-.4 2.5a7.6 7.6 0 0 0-1.7 1l-2.4-1-2 3.4 2 1.6a7.5 7.5 0 0 0 0 2l-2 1.6 2 3.4 2.4-1c.5.4 1.1.7 1.7 1l.4 2.5h4l.4-2.5c.6-.3 1.2-.6 1.7-1l2.4 1 2-3.4-2-1.6ZM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z" transform="translate(-1 0)"/></svg>
+    </button>
+  </header>
+
+  <nav class="ws-tabs" id="ws-tabs" aria-label="Espaces de travail"></nav>
+
+  <nav class="toolbar" id="toolbar" aria-label="Mise en forme">
+    <button type="button" data-type="h1" title="Titre (# )">Titre</button>
+    <button type="button" data-type="h2" title="Sous-titre (## )">Sous-titre</button>
+    <button type="button" data-type="text" title="Texte">Texte</button>
+    <button type="button" data-type="bullet" title="Liste à puces (- )">• Liste</button>
+    <button type="button" data-type="check" title="Checklist ([] )">☑ Checklist</button>
+    <span class="sep" aria-hidden="true"></span>
+    <button type="button" data-cmd="bold" title="Gras (⌘B)"><b>B</b></button>
+    <button type="button" data-cmd="italic" title="Italique (⌘I)"><i>I</i></button>
+    <button type="button" data-cmd="link" title="Lien (⌘K)">🔗 Lien</button>
+    <button type="button" data-cmd="image" title="Insérer une image">🖼 Image</button>
+    <input type="file" id="image-input" accept="image/*" multiple hidden>
+  </nav>
+
+  <nav class="tabs" aria-label="Vue">
+    <button type="button" class="tab active" data-view="notes">Notes</button>
+    <button type="button" class="tab" data-view="matrix">Matrice</button>
+  </nav>
+
+  <main class="layout" data-view="notes">
+    <section class="panel notes-panel" data-drop="notes">
+      <div class="blocklist" data-list="notes" data-empty="Écris ici…"></div>
+    </section>
+
+    <section class="panel matrix-panel">
+      <div class="matrix">
+        <div class="quadrant q1" data-drop="q1">
+          <header><strong>Faire</strong><span>Urgent · Important</span></header>
+          <div class="blocklist" data-list="q1" data-empty="Rien d'urgent et important"></div>
+        </div>
+        <div class="quadrant q2" data-drop="q2">
+          <header><strong>Planifier</strong><span>Pas urgent · Important</span></header>
+          <div class="blocklist" data-list="q2" data-empty="À planifier"></div>
+        </div>
+        <div class="quadrant q3" data-drop="q3">
+          <header><strong>Déléguer</strong><span>Urgent · Pas important</span></header>
+          <div class="blocklist" data-list="q3" data-empty="À déléguer"></div>
+        </div>
+        <div class="quadrant q4" data-drop="q4">
+          <header><strong>Éliminer</strong><span>Pas urgent · Pas important</span></header>
+          <div class="blocklist" data-list="q4" data-empty="À abandonner"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="ws-menu" class="menu ws-menu" hidden>
+    <button type="button" class="ws-menu-item" id="ws-rename">
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      Renommer
+    </button>
+    <button type="button" class="ws-menu-item danger" id="ws-delete">
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Supprimer
+    </button>
+  </div>
+
+  <div id="block-menu" class="menu" hidden>
+    <div class="menu-title">Déplacer vers</div>
+    <div class="menu-row" id="menu-move"></div>
+    <div class="menu-title" id="menu-ws-title">Autre espace</div>
+    <div class="menu-row" id="menu-ws"></div>
+    <div class="menu-title" id="menu-type-title">Type</div>
+    <div class="menu-row" id="menu-type"></div>
+    <button type="button" class="menu-danger" id="menu-delete">Supprimer</button>
+  </div>
+
+  <div id="toast" class="toast" role="status" hidden>
+    <span class="toast-msg"></span>
+    <button type="button" class="toast-undo">Annuler</button>
+  </div>
+
+  <dialog id="settings">
+    <form method="dialog" class="settings-form">
+      <h2>Synchronisation GitHub</h2>
+      <p class="hint">Tes notes sont enregistrées dans un fichier d'un dépôt <strong>privé</strong>. Ces réglages restent sur cet appareil : saisis-les une fois sur chaque appareil.</p>
+      <label>Utilisateur GitHub<input name="owner" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="ggommendy"></label>
+      <label>Dépôt des données<input name="repo" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="appnotes-data"></label>
+      <label>Fichier<input name="path" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="data.json"></label>
+      <label>Jeton d'accès (token)<input name="token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…"></label>
+      <p class="hint" id="settings-result"></p>
+      <div class="settings-actions">
+        <button type="button" id="settings-test">Tester</button>
+        <button type="button" id="settings-clear" class="ghost">Déconnecter</button>
+        <span class="spacer"></span>
+        <button value="cancel" class="ghost">Annuler</button>
+        <button type="button" id="settings-save" class="primary">Enregistrer</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

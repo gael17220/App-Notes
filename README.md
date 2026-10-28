@@ -18,9 +18,12 @@ Glisse un élément avec sa poignée ⋮⋮ pour le déplacer. Un simple clic su
 | ⌘/Ctrl + K | Ajouter ou modifier un lien |
 
 ## Espaces de travail
-Clique sur le nom en haut à gauche (« Perso ▾ ») pour changer d'espace : École, Perso, Travail…
-Chaque espace a ses propres notes et sa propre matrice. Dans ce menu, tu peux créer un espace (＋), le renommer (crayon) ou le supprimer (poubelle).
-Pour envoyer une tâche dans un autre espace : clique sur sa poignée ⋮⋮, puis « Autre espace ».
+Tes espaces (École, Perso, Travail…) sont affichés en onglets côte à côte, en haut de l'app. Clique sur un onglet pour l'ouvrir. Le petit nombre indique les tâches à faire dans cet espace.
+Chaque espace a ses propres notes et sa propre matrice.
+- **Créer** : bouton **+** au bout des onglets.
+- **Renommer** : double-clic sur l'onglet ouvert, ou **⋯** puis « Renommer ».
+- **Supprimer** : **⋯** puis « Supprimer ». ↶ Annuler permet de revenir en arrière.
+- **Envoyer une tâche dans un autre espace** : glisse-la par sa poignée ⋮⋮ sur l'onglet de cet espace, ou clique sur ⋮⋮ puis « Autre espace ».
 
 ## Tâches réalisées
 Une tâche cochée descend dans la section « Tâches réalisées », en bas des **Notes**, y compris quand tu la coches dans la matrice.

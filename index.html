@@ -10,8 +10,9 @@
   <meta name="apple-mobile-web-app-title" content="AppNotes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icon-512.png">
+  <link rel="icon" href="icon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
   <link rel="stylesheet" href="style.css">
   <script>
     // Applique le thème choisi avant l'affichage, pour éviter un flash de couleurs
@@ -20,7 +21,7 @@
 </head>
 <body>
   <header class="topbar">
-    <h1 class="brand"><img src="icon.svg" alt="" width="24" height="24">AppNotes</h1>
+    <h1 class="brand"><img src="icon-192.png" alt="" width="28" height="28"><span class="brand-name">AppNotes</span></h1>
     <span class="spacer"></span>
     <div class="history" role="group" aria-label="Historique">
       <button id="undo-btn" class="icon-btn" type="button" title="Annuler (⌘Z)" aria-label="Annuler" disabled>

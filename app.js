@@ -207,7 +207,13 @@ function blockEl(b) {
     const img = document.createElement('img');
     img.alt = '';
     img.draggable = false;
-    wrap.append(img);
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'img-del';
+    del.title = 'Supprimer l\'image';
+    del.setAttribute('aria-label', 'Supprimer l\'image');
+    del.textContent = '×';
+    wrap.append(img, del);
     el.append(wrap);
     imageURL(b.src).then(url => {
       if (url) img.src = url; else wrap.classList.add('missing');
@@ -735,6 +741,50 @@ const imageInput = $('#image-input');
 // Ne pas voler le focus au texte en cours d'édition
 toolbar.addEventListener('pointerdown', e => e.preventDefault());
 toolbar.addEventListener('mousedown', e => e.preventDefault());
+
+/* Sur téléphone : la barre de mise en forme reste en bas, collée au-dessus du clavier */
+const mobileQuery = matchMedia('(max-width: 820px)');
+
+function placeToolbar() {
+  const vv = window.visualViewport;
+  if (!mobileQuery.matches || !vv) {
+    toolbar.style.top = '';
+    toolbar.style.bottom = '';
+    document.body.classList.remove('kb-open');
+    return;
+  }
+  document.body.classList.toggle('kb-open', vv.height < innerHeight - 120);
+  document.documentElement.style.setProperty('--toolbar-h', `${toolbar.offsetHeight}px`);
+  toolbar.style.bottom = 'auto';
+  toolbar.style.top = `${vv.offsetTop + vv.height - toolbar.offsetHeight}px`;
+  keepCaretVisible();
+}
+
+/** Fait défiler la note pour que la ligne en cours reste visible, ni sous la barre ni hors de l'écran. */
+function keepCaretVisible() {
+  if (!mobileQuery.matches) return;
+  const el = document.activeElement?.closest?.('.text, .image-wrap');
+  const scroller = el?.closest('.notes-panel, .matrix-panel');
+  if (!scroller) return;
+  let rect = null;
+  const sel = getSelection();
+  if (el.classList.contains('text') && sel.rangeCount) {
+    const r = sel.getRangeAt(0).cloneRange();
+    r.collapse(false);
+    rect = r.getClientRects()[0] || null;
+  }
+  if (!rect) rect = el.getBoundingClientRect();
+  const bottom = toolbar.getBoundingClientRect().top - 16;
+  const top = Math.max(scroller.getBoundingClientRect().top, window.visualViewport?.offsetTop || 0) + 8;
+  if (rect.bottom > bottom) scroller.scrollTop += rect.bottom - bottom;
+  else if (rect.top < top) scroller.scrollTop -= top - rect.top;
+}
+
+window.visualViewport?.addEventListener('resize', placeToolbar);
+window.visualViewport?.addEventListener('scroll', placeToolbar);
+mobileQuery.addEventListener('change', placeToolbar);
+document.addEventListener('focusin', () => setTimeout(placeToolbar, 50));
+document.addEventListener('input', () => requestAnimationFrame(keepCaretVisible));
 toolbar.addEventListener('click', e => {
   const cmdBtn = e.target.closest('button[data-cmd]');
   if (cmdBtn) {
@@ -798,7 +848,7 @@ document.addEventListener('click', e => {
     toggleDone(box.closest('.block').dataset.id);
     return;
   }
-  const del = e.target.closest('.del');
+  const del = e.target.closest('.del, .img-del');
   if (del) {
     deleteBlock(del.closest('.block').dataset.id);
     return;
@@ -1617,6 +1667,7 @@ if (savedTheme !== 'light' && savedTheme !== 'dark') {
 applyTheme(savedTheme);
 setView(savedView);
 renderAll();
+placeToolbar();
 setStatus('local');
 sync.run();
 

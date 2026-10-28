@@ -1,6 +1,6 @@
 // Mode hors ligne : on sert la dernière version connue de l'app quand le réseau manque.
 // Réseau d'abord, pour que chaque `git push` soit visible dès le prochain chargement.
-const CACHE = 'appnotes-v8';
+const CACHE = 'appnotes-v9';
 const FILES = ['./', 'index.html', 'style.css', 'app.js', 'manifest.json', 'icon-32.png', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', e => {

@@ -46,16 +46,24 @@
   <nav class="ws-tabs" id="ws-tabs" aria-label="Espaces de travail"></nav>
 
   <nav class="toolbar" id="toolbar" aria-label="Mise en forme">
-    <button type="button" data-type="h1" title="Titre (# )">Titre</button>
-    <button type="button" data-type="h2" title="Sous-titre (## )">Sous-titre</button>
-    <button type="button" data-type="text" title="Texte">Texte</button>
-    <button type="button" data-type="bullet" title="Liste à puces (- )">• Liste</button>
-    <button type="button" data-type="check" title="Checklist ([] )">☑ Checklist</button>
+    <button type="button" data-type="h1" title="Titre (# )" aria-label="Titre"><span class="ico ico-txt">H1</span><span class="lbl">Titre</span></button>
+    <button type="button" data-type="h2" title="Sous-titre (## )" aria-label="Sous-titre"><span class="ico ico-txt">H2</span><span class="lbl">Sous-titre</span></button>
+    <button type="button" data-type="text" class="btn-text" title="Texte" aria-label="Texte"><span class="lbl">Texte</span></button>
+    <button type="button" data-type="bullet" title="Liste à puces (- )" aria-label="Liste">
+      <svg class="ico" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="currentColor"><circle cx="5" cy="6.5" r="1.6"/><circle cx="5" cy="12" r="1.6"/><circle cx="5" cy="17.5" r="1.6"/></g><path d="M10 6.5h10M10 12h10M10 17.5h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="lbl">Liste</span>
+    </button>
+    <button type="button" data-type="check" title="Checklist ([] )" aria-label="Checklist">
+      <svg class="ico" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="6" height="6" rx="1.5"/><path d="m4.5 16.5 1.5 1.5 3-3"/><path d="M13 7h8M13 17h8"/></g></svg><span class="lbl">Checklist</span>
+    </button>
     <span class="sep" aria-hidden="true"></span>
-    <button type="button" data-cmd="bold" title="Gras (⌘B)"><b>B</b></button>
-    <button type="button" data-cmd="italic" title="Italique (⌘I)"><i>I</i></button>
-    <button type="button" data-cmd="link" title="Lien (⌘K)">🔗 Lien</button>
-    <button type="button" data-cmd="image" title="Insérer une image">🖼 Image</button>
+    <button type="button" data-cmd="bold" title="Gras (⌘B)" aria-label="Gras"><b class="ico-txt">B</b></button>
+    <button type="button" data-cmd="italic" title="Italique (⌘I)" aria-label="Italique"><i class="ico-txt">I</i></button>
+    <button type="button" data-cmd="link" title="Lien (⌘K)" aria-label="Lien">
+      <svg class="ico" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></g></svg><span class="lbl">Lien</span>
+    </button>
+    <button type="button" data-cmd="image" title="Insérer une image" aria-label="Image">
+      <svg class="ico" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="m3.5 17 5-5 4 4 2.5-2.5 5 5" stroke-linecap="round"/></g><circle cx="15.5" cy="9" r="1.6" fill="currentColor"/></svg><span class="lbl">Image</span>
+    </button>
     <input type="file" id="image-input" accept="image/*" multiple hidden>
   </nav>
 

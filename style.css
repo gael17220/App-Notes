@@ -195,8 +195,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
   border: 1px solid var(--border); background: var(--surface);
   border-radius: 8px; padding: 5px 10px; font-size: 14px;
 }
+.toolbar button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 .toolbar button.active { background: var(--accent-soft); border-color: var(--accent); }
 .toolbar button[data-cmd="bold"], .toolbar button[data-cmd="italic"] { min-width: 34px; font-family: Georgia, serif; }
+.toolbar svg.ico { width: 16px; height: 16px; flex: none; }
+/* Sur ordinateur : libellés en clair ; « H1 / H2 » ne servent qu'en version icônes (téléphone) */
+.toolbar span.ico-txt { display: none; }
 .toolbar .sep { flex: none; width: 1px; margin: 4px 2px; background: var(--border); }
 
 /* ---------- Onglets (mobile) ---------- */
@@ -439,17 +443,32 @@ dialog::backdrop { background: rgba(0, 0, 0, .35); }
   .tab { flex: 1; border: 0; background: transparent; border-radius: 8px; padding: 6px; font-size: 14px; }
   .tab.active { background: var(--accent-soft); font-weight: 600; }
 
-  /* Barre de mise en forme en bas (placée au-dessus du clavier par app.js) */
+  /* Barre de mise en forme : petite pilule flottante en bas, au-dessus du clavier (placée par app.js) */
   .toolbar {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
-    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
-    background: var(--surface); border-top: 1px solid var(--border);
-    box-shadow: 0 -4px 14px rgba(0, 0, 0, .08);
+    position: fixed; z-index: 20;
+    left: 50%; transform: translateX(-50%);
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    width: max-content; max-width: calc(100vw - 24px);
+    gap: 2px; padding: 4px;
+    border: 1px solid var(--border); border-radius: 16px;
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(1.6); backdrop-filter: blur(18px) saturate(1.6);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, .22);
   }
-  body.kb-open .toolbar { padding-bottom: 8px; }
-  .toolbar button { padding: 7px 12px; font-size: 15px; }
+  .toolbar button {
+    width: 38px; height: 38px; padding: 0;
+    border: 0; border-radius: 11px; background: transparent;
+    font-size: 15px;
+  }
+  .toolbar button.active { background: var(--accent-soft); color: var(--text); }
+  .toolbar button:active { background: var(--bg); }
+  .toolbar .lbl, .toolbar .btn-text { display: none; }
+  .toolbar span.ico-txt { display: inline; font-weight: 700; font-size: 14px; letter-spacing: -.02em; }
+  .toolbar svg.ico { width: 20px; height: 20px; }
+  .toolbar b.ico-txt, .toolbar i.ico-txt { font-size: 18px; }
+  .toolbar .sep { margin: 8px 3px; }
 
-  .layout { grid-template-columns: 1fr; padding-bottom: calc(var(--toolbar-h, 60px) + 12px); }
+  .layout { grid-template-columns: 1fr; padding-bottom: calc(var(--toolbar-h, 48px) + 22px + env(safe-area-inset-bottom)); }
   .handle { width: 28px; }
   .layout[data-view="notes"] .matrix-panel,
   .layout[data-view="matrix"] .notes-panel { display: none; }

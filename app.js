@@ -753,10 +753,18 @@ function placeToolbar() {
     document.body.classList.remove('kb-open');
     return;
   }
-  document.body.classList.toggle('kb-open', vv.height < innerHeight - 120);
+  const kbOpen = vv.height < innerHeight - 120;
+  document.body.classList.toggle('kb-open', kbOpen);
   document.documentElement.style.setProperty('--toolbar-h', `${toolbar.offsetHeight}px`);
-  toolbar.style.bottom = 'auto';
-  toolbar.style.top = `${vv.offsetTop + vv.height - toolbar.offsetHeight}px`;
+  if (kbOpen) {
+    // Clavier ouvert : la pilule flotte juste au-dessus
+    toolbar.style.bottom = 'auto';
+    toolbar.style.top = `${vv.offsetTop + vv.height - toolbar.offsetHeight - 8}px`;
+  } else {
+    // Clavier fermé : position par défaut du CSS (en bas, au-dessus de la barre d'accueil)
+    toolbar.style.top = '';
+    toolbar.style.bottom = '';
+  }
   keepCaretVisible();
 }
 
@@ -1672,5 +1680,22 @@ setStatus('local');
 sync.run();
 
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-  navigator.serviceWorker.register('sw.js').catch(() => { /* hors ligne non disponible */ });
+  // Mise à jour automatique : quand une nouvelle version est publiée, l'app se recharge toute seule
+  // (sauf si tu es en train d'écrire : elle attend que tu quittes la ligne)
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloadPending = false;
+  const reloadWhenIdle = () => {
+    if (!document.activeElement?.closest?.('.text, input, textarea, dialog[open]')) location.reload();
+    else reloadPending = true;
+  };
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController) reloadWhenIdle(); });
+  document.addEventListener('focusout', () => { if (reloadPending) setTimeout(reloadWhenIdle, 300); });
+
+  navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(reg => {
+    // Vérifie s'il y a une nouvelle version à chaque retour sur l'app, et toutes les 10 minutes
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') reg.update().catch(() => {});
+    });
+    setInterval(() => reg.update().catch(() => {}), 10 * 60_000);
+  }).catch(() => { /* hors ligne non disponible */ });
 }

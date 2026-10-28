@@ -1,10 +1,15 @@
 // Mode hors ligne : on sert la dernière version connue de l'app quand le réseau manque.
 // Réseau d'abord, pour que chaque `git push` soit visible dès le prochain chargement.
-const CACHE = 'appnotes-v9';
+const CACHE = 'appnotes-v11';
 const FILES = ['./', 'index.html', 'style.css', 'app.js', 'manifest.json', 'icon-32.png', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+  // `reload` : on ignore le cache HTTP du navigateur (GitHub Pages le garde 10 min)
+  e.waitUntil(
+    caches.open(CACHE)
+      .then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' }))))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', e => {
@@ -20,10 +25,13 @@ self.addEventListener('fetch', e => {
   // Les appels à l'API GitHub (tes données) ne passent jamais par le cache
   if (e.request.method !== 'GET' || url.origin !== location.origin) return;
   e.respondWith(
-    fetch(e.request)
+    // `no-cache` : on redemande toujours au serveur s'il y a plus récent (réponse rapide si rien n'a changé)
+    fetch(e.request, { cache: 'no-cache' })
       .then(res => {
-        const copy = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, copy));
+        if (res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, copy));
+        }
         return res;
       })
       .catch(() => caches.match(e.request, { ignoreSearch: true }))

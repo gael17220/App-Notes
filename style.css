@@ -60,21 +60,31 @@ html, body {
   -webkit-text-size-adjust: 100%;
 }
 
+/* La page elle-même ne défile jamais (seuls les panneaux défilent) : rien ne glisse
+   sous la barre d'état de l'iPhone, donc pas de flou ni de rebond en haut */
+html { overflow: hidden; overscroll-behavior: none; }
 body {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
   display: flex;
   flex-direction: column;
-  height: 100dvh;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
 }
+.panel, .quadrant .blocklist, .matrix-panel { overscroll-behavior: contain; }
 
 button { font: inherit; color: inherit; cursor: pointer; }
 
 /* ---------- Barre du haut ---------- */
 .topbar {
+  position: relative;
+  z-index: 5;
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
+  background: var(--bg);
 }
 .topbar .spacer { flex: 1; }
 .brand {
